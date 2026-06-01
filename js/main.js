@@ -1,3 +1,11 @@
+// ─── FB Event Button Tracking ───
+document.querySelector('.btn-fb')?.addEventListener('click', () => {
+  gtag('event', 'fb_event_button_click', {
+    event_category: 'engagement',
+    event_label: 'facebook_event_page'
+  });
+});
+
 // ─── Scroll Reveal ───
 const revealObserver = new IntersectionObserver(
   entries => {
