@@ -74,6 +74,26 @@ function renderGallery(groups) {
   initLightboxItems(container);
 }
 
+// ─── Section Reached Tracking ───
+const sectionObserver = new IntersectionObserver(
+  entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        gtag('event', 'section_reached', {
+          event_category: 'engagement',
+          section_id: entry.target.id
+        });
+        sectionObserver.unobserve(entry.target);
+      }
+    });
+  },
+  { threshold: 0.3 }
+);
+['story', 'gallery', 'next-event', 'about', 'rules'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) sectionObserver.observe(el);
+});
+
 // ─── Lightbox ───
 const lightbox      = document.getElementById('lightbox');
 const lightboxImg   = document.getElementById('lightbox-img');
@@ -87,6 +107,12 @@ function initLightboxItems(root = document) {
       lightboxImg.src = img.src;
       lightboxImg.alt = img.alt;
       lightboxLabel.textContent = '';
+      // A. 写真クリック計測
+      const filename = img.src.split('/').slice(-2).join('/');
+      gtag('event', 'photo_lightbox_open', {
+        event_category: 'engagement',
+        photo_path: filename
+      });
       openLightbox();
     };
     item.addEventListener('click', open);
